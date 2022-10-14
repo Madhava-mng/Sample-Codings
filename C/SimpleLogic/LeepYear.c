@@ -1,17 +1,14 @@
 #include <stdio.h>
-int main ()
-{
-    int year;
-    year=2000;
+
+int isLeep(int y){
+  if(y % 400 == 0 || (y%4 == 0 && y%100 != 0)){
+    return 1;
+  }
+  return 0;
+}
+
+int main (){
+    int year = 2000;
+    printf("Is %d is%s a Leep Year\n", year, isLeep(year)? " ":" Not");
     
-    if(year % 400 == 0)
-        printf("%d is a Leap Year",year);
-        
-    else if(year % 4 == 0  && year % 100 != 0)
-        printf("%d is a Leap Year",year);
-        
-    else
-        printf("%d is not a Leap Year",year);
-    
-    return 0;
 }
