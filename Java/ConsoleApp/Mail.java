@@ -10,11 +10,13 @@ class Users {
   ArrayList<Integer> sent = new ArrayList<Integer>();
 
   public void getData(){
-    Scanner s = new Scanner(System.in);
-    System.out.printf("Enter Name: ");
-    this.name = s.nextLine();
-    System.out.printf("Enter Password: ");
-    this.pass = s.nextLine();
+    try (Scanner s = new Scanner(System.in)) {
+      System.out.printf("Enter Name: ");
+      this.name = s.nextLine();
+      System.out.printf("Enter Password: ");
+      this.pass = s.nextLine();
+      s.close();
+    }
   }
 }
 
@@ -58,6 +60,7 @@ class Mails {
     this.sub = s.nextLine();
     System.out.printf("Msg: ");
     this.msg = s.nextLine();
+    s.close();
   }
   public boolean valid(){
     if(this.from.equals(this.to)){

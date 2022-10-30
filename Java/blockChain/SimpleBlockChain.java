@@ -1,24 +1,44 @@
-import java.io.*;
+
 import java.util.Scanner;
 import java.math.BigInteger;
-import java.lang.*;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.ArrayList;
 
+class ErrorMessage {
+  void chainBroken() {
+    System.out.println("[!] Chain Broken");
+  }
 
-class ErrorMessage{
-  void chainBroken(){System.out.println("[!] Chain Broken");}
-  void optionNotFound(){System.out.println("[!] Option not found");}
+  void optionNotFound() {
+    System.out.println("[!] Option not found");
+  }
 }
 
 class NormalMessage {
-  void chainValid(){System.out.println("[*] Chain valid");}
-  void blockCreated(int a){System.out.printf("\r[+%d] Block Created.  \n", a);}
-  void blockCreating(int a){System.out.printf("\r[@%d] Creating..", a);}
-  void genisisCreated(){System.out.println("\r[+0] Genisis Block created");}
-  void printMenu(){System.out.printf("1> create Block\n2> show chain\n3> check Relaiyable\n4> Quit\n>option: ");}
-  void addBlockPrompt(){System.out.printf("Enter the data: ");}
+  void chainValid() {
+    System.out.println("[*] Chain valid");
+  }
+
+  void blockCreated(int a) {
+    System.out.printf("\r[+%d] Block Created.  \n", a);
+  }
+
+  void blockCreating(int a) {
+    System.out.printf("\r[@%d] Creating..", a);
+  }
+
+  void genisisCreated() {
+    System.out.println("\r[+0] Genisis Block created");
+  }
+
+  void printMenu() {
+    System.out.printf("1> create Block\n2> show chain\n3> check Relaiyable\n4> Quit\n>option: ");
+  }
+
+  void addBlockPrompt() {
+    System.out.printf("Enter the data: ");
+  }
 }
 
 class Block {
@@ -30,73 +50,78 @@ class Block {
   int nons;
   private int complex;
 
-  Block(int index, String data){
-    this.index =index;
+  Block(int index, String data) {
+    this.index = index;
     this.data = data;
     this.hash = "";
     this.previous = "";
     this.nons = -1;
     this.complex = 4;
   }
-  
-  public String genHash(){
+
+  public String genHash() {
     String hash_ = "";
     String data = "";
     String nonesData = "";
-    for(int i=0;i<complex;i++,nonesData += "f");
-    do{
+    for (int i = 0; i < complex; i++, nonesData += "f")
+      ;
+    do {
       System.out.printf("⚒ [@%d] Creating..\r", this.nons++);
-      try{
+      try {
         this.time = new Date().toString();
-        data = ""+ this.index + this.time + this.data + this.previous + this.nons ;
+        data = "" + this.index + this.time + this.data + this.previous + this.nons;
         MessageDigest m = MessageDigest.getInstance("SHA-1");
         byte[] md = m.digest(data.getBytes());
         BigInteger bin = new BigInteger(1, md);
         hash_ = bin.toString(16);
-      }catch(Exception e){
+      } catch (Exception e) {
         e.printStackTrace();
       }
-    }while(!hash_.substring(0,this.complex).equals(nonesData));
+    } while (!hash_.substring(0, this.complex).equals(nonesData));
     return hash_;
   }
 }
-
 
 class Chain {
   ArrayList<Block> chain = new ArrayList<Block>();
   private ErrorMessage em = new ErrorMessage();
   private NormalMessage nm = new NormalMessage();
   int chainLength;
-  String chainName;   
-  Chain(String chainName){
+  String chainName;
+
+  Chain(String chainName) {
     this.chainName = chainName;
     this.chainLength = 0;
   }
-  private void printBlock(Block a){
-    System.out.printf("{ \n\t'index': %d,\n\t'time': '%s',\n\t'data': '%s',\n\t'previous': '0x%s',\n\t'hash': '0x%s',\n\t'nons': %d\n}\n",
-    a.index,
-    a.time,
-    a.data,
-    a.previous,
-    a.hash,
-    a.nons
-    );
-  } 
-  void printChain(){
-    for(int i=0;i<chainLength;i++){
+
+  private void printBlock(Block a) {
+    System.out.printf(
+        "{ \n\t'index': %d,\n\t'time': '%s',\n\t'data': '%s',\n\t'previous': '0x%s',\n\t'hash': '0x%s',\n\t'nons': %d\n}\n",
+        a.index,
+        a.time,
+        a.data,
+        a.previous,
+        a.hash,
+        a.nons);
+  }
+
+  void printChain() {
+    for (int i = 0; i < chainLength; i++) {
       this.printBlock(chain.get(i));
     }
   }
-  void createGeniciosBlock(){
+
+  void createGeniciosBlock() {
     Block tmp = new Block(this.chainLength++, "This is " + this.chainName);
     tmp.previous = "0000000000000000000000000000000000000";
     tmp.hash = tmp.genHash();
     chain.add(tmp);
     nm.genisisCreated();
   }
-  boolean checkChainRelaiablity(){
-    for(int i=chainLength-1;i>0;i--){
-      if(chain.get(i).previous.equals(chain.get(i-1).hash)){
+
+  boolean checkChainRelaiablity() {
+    for (int i = chainLength - 1; i > 0; i--) {
+      if (chain.get(i).previous.equals(chain.get(i - 1).hash)) {
         continue;
       }
       em.chainBroken();
@@ -105,10 +130,11 @@ class Chain {
     nm.chainValid();
     return true;
   }
-  void addBlock(String data){
-    if(this.checkChainRelaiablity()){
+
+  void addBlock(String data) {
+    if (this.checkChainRelaiablity()) {
       Block tmp = new Block(this.chainLength, data);
-      tmp.previous = chain.get(chainLength-1).hash;
+      tmp.previous = chain.get(chainLength - 1).hash;
       tmp.hash = tmp.genHash();
       chain.add(tmp);
       nm.blockCreated(chainLength);
@@ -118,7 +144,7 @@ class Chain {
 }
 
 public class SimpleBlockChain {
-  public static void main(String args[]){
+  public static void main(String args[]) {
     Scanner s = new Scanner(System.in);
     String o = "";
     ErrorMessage em = new ErrorMessage();
@@ -127,21 +153,22 @@ public class SimpleBlockChain {
     System.out.printf("Enter Chain Name:");
     Chain myChain = new Chain(s.nextLine());
     myChain.createGeniciosBlock();
-    do{
+    do {
       nm.printMenu();
       o = s.nextLine();
-      if(o.equals("1")){
+      if (o.equals("1")) {
         nm.addBlockPrompt();
         myChain.addBlock(s.nextLine());
-      }else if(o.equals("2")){
+      } else if (o.equals("2")) {
         myChain.printChain();
-      }else if(o.equals("3")){
+      } else if (o.equals("3")) {
         myChain.checkChainRelaiablity();
-      }else if(o.equals("4")){
+      } else if (o.equals("4")) {
         break;
-      }else{
+      } else {
         em.optionNotFound();
       }
-    }while(!o.equals("4"));
+    } while (!o.equals("4"));
+    s.close();
   }
 }
